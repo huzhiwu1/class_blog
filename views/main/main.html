@@ -1,0 +1,74 @@
+{% extends 'header.html'%}
+{%block css%}
+<style>
+    
+   .inner-box>.title-row{
+       width:22rem;
+       overflow: hidden;
+       text-overflow: ellipsis;
+       white-space:nowrap ; 
+    
+   }
+</style>
+{%endblock%}
+{% block content%}
+<main>
+    <div class="view">
+        <div class="main-article">
+            <nav class="article-nav">
+                <h5>热门文章</h5>
+            </nav>
+            <ul class="article-list">
+                {% for content in contents %}
+                
+                <li class="item">
+                    <a href="/jk173/view?contentId={{content._id.toString()}}">
+                        
+                        <div class="content-box">
+                            <div class="inner-box">
+                                <ul class="info-row meta-row">
+                                  
+                                    <li class="item username">作者：{{content.user.username}}&nbsp;</li>
+                                   
+                                    <li class="item time">时间：{{content.addTime|date('Y年m月d日 H:i:s', -8*60)}}&nbsp;</li>
+                                  
+                                    <li class="item read">阅读：{{content.views}}&nbsp;</li>
+                                </ul>
+                                <div class="info-row title-row">{{content.title}}</div>
+                                <ul class="info-row action-row">
+                                    <!-- <li class="like-btn">
+                                        <img src="/public/images/good.svg" alt="" class="good">
+                                        <input type="hidden" id="contentId" value="{{content.id}}">
+                                        <span class="count">{{content.good}}</span>
+                                    </li> -->
+                                    <li class="comment-btn">
+                                        <img src="/public/images/comment.svg" alt="" class="comment">
+                                        <span class="count">{{content.commentNum}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="img-box">
+                                <!-- <img src="/{{content.user.userImg}}" style="width:100%"alt=""> -->
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <aside>
+            <div class="master">
+                <ul>
+                        <li>作者：胡志武</li>
+                        <li>班级：计科173</li>
+                        <li>QQ：1627983849</li>
+                        <li>留言：希望能与你交个朋友</li>
+                </ul>
+                
+            </div>
+            <div class="myImg"></div>
+        </aside>
+    </div>
+</main>
+
+{%endblock%}

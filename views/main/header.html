@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>计科173</title>
+    <link rel="stylesheet" href="/public/css/header重写.css">
+    {%block js%}
+    {%endblock%}
+    {% block css%}
+    {% endblock %}
+
+    <style>
+        #myCanvas{
+            
+            float:left;
+            z-index: -10;
+        }
+    </style>
+</head>
+<body>
+    
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="/jk173" class="logo-img">
+                    计科173
+                </a>
+            </div>
+            <nav class="main-nav">
+                <ul class="nav-list">
+                    <li class="main-nav-list">
+                        <div class="phone-show-menu">
+                            {% if category == ''%}
+                            <a href="/jk173">首页</a>
+                            {%else%}
+                            {%for cate in categories%}
+                            {%if cate.id==category%}
+                            <a href="/jk173?category={{cate.id}}">{{cate.name}}</a>
+                            {%endif%}
+                            {%endfor%}
+                            {%endif%}
+                            <img src="/public/images/arrowDown.png" alt="">
+                        </div>
+                        <ul class="phone-hide">
+                            {% if category == ''%}
+                            <li class="nav-item link-item active"><a href="/jk173">首页</a></li>
+                            {%else%}
+                            <li class="nav-item link-item"><a href="/jk173">首页</a></li>
+                            {%endif%}
+
+                            {%for cate in categories%}
+                            {% if category == cate.id%}
+                            <li class="nav-item link-item active"><a href="/jk173?category={{cate.id}}">{{cate.name}}</a></li>
+                            {%else%}
+                            <li class="nav-item link-item"><a href="/jk173?category={{cate.id}}">{{cate.name}}</a></li>
+                            {%endif%}
+                            {%endfor%}
+                            
+                            
+                        </ul>
+                    </li>
+                    <li class="search  nav-item">
+                        <form action="jk173" class="search-box">
+                            <input type="search" placeholder="搜索/文章" name="cd"class="search-inner">
+                            <img src="/public/images/search-img.svg" alt="" class="search-img">
+                        </form>
+                    </li>
+                    <li class="writer nav-item">
+                       
+                        <img src="/public/images/writer.svg" alt="" class="writer-img">
+                        <span>写文章</span>
+                    </li>
+                    
+                    {% if !userInfo._id%}
+                    <li class="login nav-item">
+                        <a href="/jk173/login">登录</a>
+                    </li>
+                    <li class="register nav-item">
+                        <a href="/jk173/register">注册</a>
+                    </li>
+                    
+                    {% else %}
+                    
+                    <li class="nav-item userInfo" id="userInfo">
+                            <div class="user-menu-show">
+                                {%if userInfo.userImg%}
+                                <img src="/{{userInfo.userImg}}" class="user-img" alt="">
+                                {%else%}
+                                <img src="/public/images/user-img.svg" class="user-img" alt="">
+                                {%endif%}
+                                
+                            </div>
+                            <ul class="user-menu-hide">
+                                <li class="user-item username"><a href="#">{{userInfo.username}}</a></li>
+                                <hr>
+                                <li class="user-item"><a href="/jk173/homePage">个人主页</a></li>
+                                {%if userInfo.isAdmin%}
+                                <li class="user-item"><a href="/jk173/admin">管理</a></li>
+                                {%endif%}
+                                <li class="user-item"><a href="/jk173/write">写文章</a></li>
+                                <li class="user-item"><a href="/jk173/logout">登出</a></li>
+                            </ul>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <canvas id="myCanvas"></canvas>
+<!-- 网页的主要部分：文章！ -->
+    {% block content%}{% endblock%}
+    
+    <script>
+        var search_box = document.getElementsByClassName("search-box")[0],
+            search_img = document.getElementsByClassName("search-img")[0],
+            search_inner = document.getElementsByClassName("search-inner")[0],
+            phone_show_menu = document.getElementsByClassName("phone-show-menu")[0],
+            phone_hide = document.getElementsByClassName("phone-hide")[0],
+            userInfo = document.getElementById("userInfo"),
+            userMenu = document.getElementsByClassName("user-menu-hide")[0],
+            writer = document.getElementsByClassName("writer")[0],
+            article_list = document.getElementsByClassName("article-list")[0],
+            goodList = document.getElementsByClassName("good");
+        // 当搜索框聚焦时，外框变成蓝色，图标也变蓝，失去焦点时，则恢复原来的样子
+        search_inner.onfocus = function(){
+            search_box.style.backgroundColor="#fff";
+            search_box.style.borderColor="#007fff";
+            search_img.src="/public/images/search-focus.svg";
+        }
+        search_inner.onblur = function(){
+            search_box.style.backgroundColor="rgba(227,231,236,.2);";
+            search_box.style.borderColor="hsla(0,0%,59.2%,.2)";
+            search_img.src="/public/images/search-img.svg";
+        }
+        phone_show_menu.onclick = function(e){
+           
+            phone_hide.classList.add("show");
+           
+        }
+        function isMenu (e){
+            var event = e || window.event;
+            var tar = event.target || event.srcElement;
+            if(tar!=phone_show_menu){
+                phone_hide.classList.remove("show");
+            }
+        }
+        function getXHR() {
+            var xhr = null;
+            if (window.XMLHttpRequest) {
+                xhr = new XMLHttpRequest();
+            } else if (window.ActiveXObject) {
+                try {
+                    xhr = new ActiveObject("Msxml2.XMLHTTP");
+                } catch (e) {
+                    try {
+                        xhr = new ActiveXObject("Microsoft.XMLHttp");
+                    } catch (e) {
+                        alert("您的浏览器暂不支持Ajax！");
+                    }
+                }
+            }
+            return xhr;
+        }
+
+        // 赞，把赞的图片换一下
+    //   for(var good in goodList){
+    //       good.onclick=function(){
+             
+    //         if(this.className==="good"){
+    //             this.className="addGood";
+    //             this.src="/public/images/addGood.svg";
+    //         }else if(this.className==="addGood"){
+    //             this.className="good";
+    //             this.src="/public/images/good.svg";
+    //         }
+    //         return false;
+    //       }
+    //   }
+    for(var i=0;i<goodList.length;i++){
+        goodList[i].onclick = function(){
+        if(this.className==="good"){
+                this.className="addGood";
+                this.src="/public/images/addGood.svg";
+            }else if(this.className==="addGood"){
+                this.className="good";
+                this.src="/public/images/good.svg";
+            }
+            return false;
+    }
+    }
+    
+    //   article_list.addEventListener("click",isGood,false);
+       
+        
+         //点击头像，出现可选列表
+        // userInfo.onclick  = function(){
+        //    userMenu.classList.toggle("show");
+        // }
+
+        function isUserInfo(e){
+            var event = e || window.event;
+            var tar = event.target || event.srcElement;
+         
+            if(tar.className!="user-img"){
+                userMenu.classList.remove("show");
+            }else{
+                userMenu.classList.toggle("show");
+            }
+        }
+        document.addEventListener("click",isMenu,true);
+       
+        document.addEventListener("click",isUserInfo,false);
+
+        //  点击写文章，看用户有没有登录，没登录则先提醒登录
+        //  登录了，跳转到写文章页面
+        
+       
+        var xhr = getXHR()
+        xhr.onreadystatechange = function(){
+            if(xhr.readyState==4&&xhr.status==200){
+                var code = JSON.parse(xhr.responseText).code;
+                if(code==5){
+                    alert("请先登录")
+                }else if(code==6){
+                    console.log("1");
+                    window.location.href="/jk173/write";
+                }
+            }
+        }
+        writer.onclick = function(e){
+           xhr.open("GET","/jk173/isLogin",true);
+           xhr.send(null);
+            
+        }
+        function search(){
+            var search_value = search_inner.value;
+            window.location.href="jk173?cd="+search_value;
+            // console.log("11")
+            // var xhr1 = getXHR();
+            // xhr1.open("GET","/jk173?cd="+search_value,true);
+            // // xhr1.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+            // // xhr1.send("cd="+search_value);
+            // xhr1.send()
+            // xhr1.onreadystatechange = function(){
+            //     if(xhr.readyState==4&&xhr.status==200){
+
+            //     }
+            // }
+        }
+        search_img.addEventListener("click",search,false);
+        document.onKeydown = function (e) {
+            var e = e || window.event;
+            console.log(e)
+            if (e.keycode == 13) {
+                search();
+            }
+
+
+        }
+        //背景canvas
+
+        var myCanvas = document.getElementById("myCanvas"),
+            context = myCanvas.getContext("2d"),
+            round = [],
+            initRoundCount = 300,
+            clientWidth = document.body.scrollWidth,
+            clientHeight = document.body.scrollHeight;
+        myCanvas.width = clientWidth;
+        myCanvas.height = clientHeight;
+        var para = {
+                color:false,//  如果是false，则是随机渐变颜色，否则以para.color做为颜色
+                r:0.9,//    圆的渐变增加的半径
+                o:0.09,//   圆消失的条件，数值越大，消失越快
+            },
+            color,  //hsl，渐变颜色的色调参数 
+            color2, //hsl，最终的颜色
+            round_arr = [];//   将出现的圆都储存在这个数组终，方便遍历
+        //  确定颜色
+        if(para.color){
+            color2 = para.color;
+        }else{
+            color = Math.random()*360;
+        }
+
+        //  绑定鼠标移动事件，确定圆的坐标
+        window.onmousemove = function(event){
+            var x = event.clientX,
+                y = event.clientY;
+            round_arr.push({
+                x:x,
+                y:y,
+                r:para.r,
+                o:1//   圆存在的条件，小于0时消失  
+            })
+        }
+
+        // //  设计animate函数，让圆动起来
+        // function animate(){
+        //     //  先确认颜色
+        //     if(!para.color){
+        //         color2 = "hsl("+color+",100%,80%)";//   color2是最终的颜色
+        //         color += 3;//   实现颜色渐变
+        //     }
+
+        //     //  要让动画动起来。先得清屏
+        //     context.clearRect(0,0,clientWidth,clientHeight);
+
+        //     //  清屏后，遍历圆的数组，绘画处出来
+        //     for(var i=0;i<round_arr.length;i++){
+        //         context.beginPath();
+        //         context.arc(round_arr[i].x,round_arr[i].y,round_arr[i].r,0,2*Math.PI,false);
+        //         context.fillStyle = color2;
+        //         context.closePath();
+        //         context.fill();
+
+        //         //实现渐变
+        //         round_arr[i].r += para.r;// 变大
+        //         round_arr[i].o -=para.o;//  消失的条件
+
+        //         if(round_arr[i].o < 0){
+        //             round_arr.splice(i,1);
+        //             //arr.splice(index,howmany,item1..,itemx)
+        //             //index:要删除的下标
+        //             //howmany:删除多少个，
+        //             //item:向数组中添加
+        //             i--;//  保证被删除的第i个元素下一个元素可以被遍历
+        //             //因为删除了第i个元素,第i+1个元素会补在i的位置
+        //         }
+        //     }
+
+        //     window.requestAnimationFrame(animate);
+        // }
+        
+        //  设置一个构造函数，产生随机位置，半径，透明度，的圆
+        function Round_item(index,x,y){
+            this.x = x;
+            this.y = y;
+            this.r = Math.random()*2+1;
+            var alpha = (Math.floor(Math.random()*10)+1)/10/2;
+            this.color = "rgba(120,120,120,"+alpha+")";
+        }
+
+        // 在Round_item的原型上设置一个画圆的方法
+        Round_item.prototype.draw = function(){
+            context.fillStyle = this.color;
+            context.shadowBlur = this.r*2;
+            context.beginPath();
+            context.arc(this.x,this.y,this.r,0,2*Math.PI,false);
+            context.closePath();
+            context.fill();
+        }
+        
+        //  让粒子动起来，使其y轴的值不断减小，到达临界值则重新放置在屏幕下端
+        Round_item.prototype.move = function(){
+            this.y -= 0.15;
+            if(this.y<=-10){
+                this.y = clientHeight + 10;
+            }
+            this.draw();
+        }
+
+        //  要产生动画，需要在系统刷新间隔的时间中，不断清除画布，再重新画上，
+        function animate(){
+            //  先确认颜色
+            if(!para.color){
+                color2 = "hsl("+color+",100%,80%)";//   color2是最终的颜色
+                color += 3;//   实现颜色渐变
+            }
+            context.clearRect(0,0,clientWidth,clientHeight)
+              //  清屏后，遍历圆的数组，绘画处出来
+              for(var i=0;i<round_arr.length;i++){
+                context.beginPath();
+                context.arc(round_arr[i].x,round_arr[i].y,round_arr[i].r,0,2*Math.PI,false);
+                context.fillStyle = color2;
+                context.closePath();
+                context.fill();
+
+                //实现渐变
+                round_arr[i].r += para.r;// 变大
+                round_arr[i].o -=para.o;//  消失的条件
+
+                if(round_arr[i].o < 0){
+                    round_arr.splice(i,1);
+                    //arr.splice(index,howmany,item1..,itemx)
+                    //index:要删除的下标
+                    //howmany:删除多少个，
+                    //item:向数组中添加
+                    i--;//  保证被删除的第i个元素下一个元素可以被遍历
+                    //因为删除了第i个元素,第i+1个元素会补在i的位置
+                }
+            }
+            for(var i = 0;i < initRoundCount;i++ ){
+                round[i].move();
+            }
+            requestAnimationFrame(animate)
+        }
+        //  一个初始化的函数，
+        function init(){
+            for(var i = 0;i < initRoundCount; i++){
+                round[i] = new Round_item(i,Math.random()*clientWidth,Math.random()*clientHeight);
+                round[i].draw();
+            }
+            animate();
+        }
+
+        init();
+        
+    </script>
+</body>
+</html>

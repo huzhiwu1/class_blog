@@ -1,0 +1,419 @@
+{% extends '../main/header.html'%}
+{%block js%}
+<script type="text/javascript" charset="utf-8" src="/public/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8"src="/public/ueditor/ueditor.all.js"></script>
+<script type="text/javascript" charset="utf-8" src="/public/ueditor/lang/zh-cn/zh-cn.js"></script>
+{%endblock%}
+{% block css%}
+<style>
+    .author-info{
+        padding:0.5rem;
+        width:100%;
+        height:5rem;
+        background-color:#fff;
+        display:flex;
+        justify-content: flex-start;
+        align-items:center;
+    }
+    @media only screen and (max-width:980px){
+        .author-info{
+            align-items:flex-start
+        }
+    }
+    .author-img{
+        width:3.5rem;
+        height:3.5rem;
+        border-radius:50%;
+        
+        background-image:url("/public/images/user-img.svg");
+        background-position:center center; 
+    }
+    .author-img-box{
+        margin:0 1.3rem;
+        cursor:pointer;
+    }
+    .article-meta-box{
+        height:3.5rem;
+        display:flex;
+        flex-direction:column;
+        justify-content: center;
+        align-items:flex-start;
+    }
+    .author-name{
+        font-size:1.5rem;
+        color:#333;
+        font-weight:700;
+    }
+    .author-name:hover{
+        color:#0077ff;
+    }
+    .article-meta{
+        
+        font-size:1.2rem;
+        color:#909090;
+    }
+    @media only screen and (max-width:980px){
+        .article-meta{
+            display:flex;
+            justify-content: flex-start;
+            flex-direction:column;
+            align-items:flex-start;
+        }
+    }
+    .time{
+        letter-spacing: 0.2rem;
+    }
+    .article-content{
+        width:100%;
+        background-color:#fff;
+        
+        font-size:1.3rem;
+    }
+    .article-content:before{
+        content:"";
+        display:block;
+        width:100%;
+        height:1px;
+        background-color:#f1f1f1;
+    }
+    .article-title{
+        text-align:center;  
+        color:#333;
+    }
+    .content{
+        color:#333;
+        font-size:1.6rem;
+        font-weight:500;
+    }
+    @media only screen and (max-width:980px){
+        .article-title{
+            font-size:2.3rem;;  
+        }
+        .content{
+            font-size:1.5rem;
+        }
+    }
+    .comment-list-box{
+        width:100%;
+        background-color:#fafbfc;
+        position:relative;
+
+    }
+    .comment-list-box:before{
+        content:"";
+        display:block;
+        width:100%;
+        height:1px;
+        background-color:#f1f1f1;
+        margin-bottom:1rem;
+    }
+    .comment-list-box::after{
+        content:"";
+        clear:both;
+        display:block;
+        width:100%;
+    }
+    .comment-title{
+        text-align:center;
+        font-size:2rem;
+        color:#909090;
+
+    }
+    .comment-box{
+        width:100%;
+        max-width:700px;
+        display:flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
+    #comment{
+        flex:1 1 auto;
+        width:100%;
+    }
+    @media only screen and (max-width:980px){
+        .comment-box{
+            max-width:980px;
+        }
+        #comment{
+            width:99.3%;
+        }
+    }
+    .comment-btn{
+       float:right;
+        border:none;
+        border-radius:5px;
+        padding:1rem;
+        background-color:#027fff;
+        opacity:.4;
+        color:#fff;
+        margin-top:1rem;
+        cursor:pointer;
+    }
+    .comment-btn:hover{
+        opacity:.6;
+    }
+    .comments-list{
+        width:100%;
+        background-color:#fff;
+        margin-top:1rem;
+        
+    }
+    .comments-list::before{
+        content:"";
+        display:block;
+        width:100%;
+        height:1px;
+        background-color:#f1f1f1;
+       
+    }
+    .comment-item{
+        width:90%;
+        margin:1rem auto;
+    }
+    .comment-item::after{
+        content:"";
+        width:100%;
+        height:1px;
+        background-color:#f1f1f1
+    }
+    .comment-box{
+        width:100%;
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
+    .commenter-img{
+        width:2.87rem;
+        height:2.67rem;
+        border-radius:50%;
+        background-image:url("/public/images/user-img.svg");
+        background-position:center center;
+    }
+    .comment-content{
+        margin-left:1rem;
+        flex:1 1 auto;
+        width:100%;
+        display: flex;
+        flex-direction:column;
+        justify-content: flex-start;
+        align-items: flex-start
+    }
+    .commenter-name{
+        font-size:1.3rem;
+        color:#333;
+        font-weight:500;
+        cursor:pointer;
+
+    }
+    .main-conment{
+        width:100%;
+        font-size:1.2rem;
+        color:#505050;
+        margin-top:.5rem;
+        word-wrap: break-word;
+        word-break: normal;
+    }
+    .comment-time{
+        margin-top:.5rem;
+        color:#909090;
+        letter-spacing:.1rem;
+        font-size:1.1rem;
+    }
+    .content img:not(img[src~="http://img.baidu.com"]){
+        width:100%;
+    }
+    .dir{
+        color:#909090;
+        font-size:1.2rem;
+        margin-left:1rem;
+    }
+    .content{
+        
+        /* overflow-x:scroll;
+        word-wrap:break-word; */
+        /* display:flex;
+        flex-direction:column;
+        justify-content: flex-start;
+        align-content: center; */
+       flex:1 1 auto;
+    }
+    table{
+        width:100%;
+        display:flex;
+        flex-direction:column;
+        justify-content: flex-start;
+        align-content: center;
+    }
+    tbody{
+       width:100%;
+        flex:1 1 auto;
+        display:flex;
+        flex-direction:column;
+        justify-content: flex-start;
+    }
+    thead{
+        display:flex;
+      
+        justify-content: flex-start;
+    }
+    th{
+        flex:1 1 auto;
+    }
+    tr{
+        width:100%;
+        display:flex;
+        justify-content: flex-start;
+    }
+    td{
+        flex:1 1 auto;
+        display: flex;
+    }
+   td> span{
+       flex:1 1 auto;
+    }
+</style>
+{% endblock%}
+{% block content%}
+<main>
+    <div class="view">
+        <div class="main-article">
+            <nav class="author-info">
+               <a class="author-img-box">
+                
+                {%if content.user.userImg%}
+                <img class="author-img" src="/{{content.user.userImg}}")>
+                {%else%}
+                <div class="author-img" ></div>
+                {%endif%}
+                   
+                  
+               </a>
+               <div class="article-meta-box">
+                   <div>
+                        <a class="author-name" href="/jk173/other?userId={{content.user.id}}">{{content.user.username}}</a><span class="dir">{{content.user.dir}}</span>
+                   </div>
+                  
+                  
+                   <div class="article-meta">
+                      
+                       <span class="time">{{content.addTime|date('Y年m月d日 H:i:s', -8*60)}}</span>
+                        <span class="views">阅读 {{content.views}}</span>
+                    </div>
+               </div>
+            </nav>
+            <div class="article-content">
+               <h1 class="article-title">{{content.title}}</h1>
+                <div class="content">
+                        {{ content.content|raw}}
+                </div>    
+            </div>
+            <div class="comment-list-box">
+                <div class="comment-title">评论</div>
+                <div class="comment-box">
+                        <script type="text/plain" id="comment" name="comment">
+                
+                        </script>
+                </div>
+                <input type="hidden" id="contentId" value="{{content.id}}">
+                <button class="comment-btn">评论</button>
+               
+            </div>
+            <div class="comments-list">
+              {%for item in content.comments%}
+                <div class="comment-item">
+                    <div class="comment-box">
+                        {%if item.userImg%}
+                        <img src="/{{item.userImg}}" class="commenter-img"alt="">
+                        {%else%}
+                        <img class="commenter-img">
+                        {%endif%}
+                        
+                        <div class="comment-content">
+                            <span class="commenter-name">{{item.username}}</span>
+                            <div class="main-conment">{{item.content|raw}}
+                            </div>
+                            <span class="comment-time">{{item.postTime|date('Y年m月d日 H:i:s', -8*60)}}</span>
+                        </div>
+                    </div>
+                </div>
+              {%endfor%}
+                
+            </div>
+        </div>
+        <aside>
+            <div class="master">
+                <ul>
+                        <li>作者：胡志武</li>
+                        <li>班级：计科173</li>
+                        <li>QQ：1627983849</li>
+                        <li>留言：希望能与你交个朋友</li>
+                </ul>
+                
+            </div>
+            <div class="myImg"></div>
+        </aside>
+        
+    </div>
+    
+</main>
+<script>
+    var ue = UE.getEditor("comment",{
+        toolbars:[
+            ["emotion"]
+        ]
+    }),
+    comment_btn = document.getElementsByClassName("comment-btn")[0];
+    ue.addListener("contentChange",function(){
+        comment_btn.style.opacity=1
+},true);
+    var contentId = document.getElementById("contentId").value,
+        commentBtn = document.getElementsByClassName("comment-btn")[0];
+
+    function getXHR() {
+            var xhr = null;
+            if (window.XMLHttpRequest) {
+                xhr = new XMLHttpRequest();
+            } else if (window.ActiveObject) {
+                try {
+                    xhr = new ActiveObject("Msxml2.XMLHTTP");
+                } catch (e) {
+                    try {
+                        xhr = new ActiveObject("Microsoft.XMLHttp");
+                    } catch (e) {
+                        alert("您的浏览器暂不支持Ajax！");
+                    }
+                }
+            }
+            return xhr;
+        }
+    var xhr = getXHR();
+ 
+    
+    //  点击评论，则获取富文本，ajax发送
+    commentBtn.onclick = function(){
+        var commentData = ue.getContent();
+        
+        //评论提交
+        xhr.open("POST","/jk173/comment",true);
+        xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+        xhr.send("contentId="+contentId+"&content="+ue.getContent());
+        xhr.onreadystatechange = function(){
+        if(xhr.readyState==4&&xhr.status==200){
+            console.log("1")
+            var code = JSON.parse(xhr.responseText).code;
+            if(code==9){
+                window.location.reload()
+            }else if(code==10){
+                alert("请先登录")
+            }
+        }
+    }
+
+    }
+
+
+
+
+    
+</script>
+{%endblock%}

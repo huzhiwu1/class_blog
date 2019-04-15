@@ -1,0 +1,342 @@
+{% extends '../main/header.html'%}
+{%block css%}
+<style>
+    .main-article>.article-nav{
+        justify-content: flex-start;
+
+    }
+    .article-nav>h5{
+        font-size:2rem;
+        font-weight:600;
+    }
+    ul.article-list{
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        padding:0 2rem;
+        width:100%;
+    }
+    ul.article-list>li{
+        display:flex;
+        justify-content: flex-start;
+        align-items:center;
+        height:10rem;
+        width:80%;
+        border-top:1px solid #f1f1f1;
+        border-bottom:1px solid #f1f1f1;
+    }
+    li>.title{
+        font-size:1.3rem;
+        color:#333;
+        margin-right:3rem;
+        
+    }
+    .dataBox{
+       
+        display: flex;
+        justify-content: space-around;
+        align-items:center;
+        width:100%;
+    }
+    .user-meta{
+        display:flex;
+       justify-content: center;
+    }
+    .user-img{
+      
+        width:6rem;
+        height:6rem;
+        margin-right:2rem;
+     
+    }
+   .img-btn{
+       width:50%;
+      
+       flex:1 1 auto;
+   }
+    @media only screen and (max-width:980px){
+        .user-img{
+            
+            width:4rem;
+            height:4rem;
+            margin-right:2rem;
+        }
+    }
+   
+    .input-box{
+        padding:.5rem 1rem;
+        border: 1px solid hsla(0,0%,59.2%,.2);
+        background-color: rgba(227,231,236,.2);
+        border-radius:2px;
+        width:100%;
+    }
+    
+    
+    .username,.dir{
+        border:none;
+        outline:none;
+        font-size:1.3rem;
+        width:100%;
+       
+    }
+    li>button{
+        width:100%;
+        height:4rem;
+        text-align:center;
+        border:none;
+        border-radius:1rem;
+        line-height: 4rem;
+        background: #0077ff;
+        color:#fff;
+        font-size:3rem;
+        font-weight:600;
+    }
+    .myArticle{
+        width:100%;
+        background:#fff;
+        /* display:flex;
+        flex-direction:column;
+        justify-content:flex-start;
+        align-content:flex-start */
+    }
+    .article-list-head{
+        padding:0 2rem;
+        font-size:2rem;
+        color:#333;
+        font-weight:600;
+    }
+    table.content-item{
+        width:100%;
+        margin:0 auto;
+        border-collapse: collapse;
+        font-size:1.5rem;
+    }
+    /*
+    th{
+        flex:1 1 auto;
+        display: flex;
+        justify-content: center;
+        align-items:center;
+    }
+    tr{
+        width:100%;
+        display:flex;
+        justify-content: space-around;
+        align-items:center;
+        height:2rem;
+        border:1px solid #f1f1f1
+    }
+    td{
+        flex:1 1 auto;
+        display:flex;
+        justify-content: center;
+        align-items:center;
+    } */
+    th{
+      
+        border:1px solid #999
+    }
+    td{
+        text-align:center;
+        border:1px solid #999
+    }
+    
+    .remove{
+        color:#0077ff;
+        cursor:pointer;
+    }
+    .remove:hover{
+        color:#0371df
+    }
+    .title>a{
+        color:#0077ff;
+    }
+    .title:hover>a{
+        color:#0371df;
+    }
+</style>
+{%endblock%}
+{% block content%}
+<main>
+    <div class="view">
+        <div class="main-article">
+            <nav class="article-nav">
+                <h5>个人资料</h5>
+            </nav>
+            <ul class="article-list">
+               <li>
+                   <span class="title">头像</span>
+                   <div class="dataBox">
+                       <img src="/{{userInfo.userImg}}" alt="" class="user-img">
+                       <div class="user-meta">
+                           <input type="file" class="img-btn" ></input>
+                       </div>
+                   </div>
+               </li>
+               <li>
+                   <span class="title">姓名</span>
+                   <div class="dataBox">
+                  
+                    <div class="input-box">
+                        <input type="text" class="inputusername"  value={{userInfo.username}}></input>
+                    </div>
+                </div>
+               </li>
+               <li>
+                    <span class="title">简介</span>
+                    <div class="dataBox">
+                   
+                     <div class="input-box">
+                         <input type="text" class="dir" value={{userInfo.dir}}></input>
+                     </div>
+               </li>
+               <li>
+                   <button>保存</button>
+               </li>
+            </ul>
+            <div class="myArticle">
+                    <nav class="article-list-head">
+                            <h5>我的文章</h5>
+                    </nav>
+                
+                <table class="content-item" >
+                    <thead>
+                            <tr>
+                                    <th>标题</th>
+                                    <th>分类</th>
+                                    <th>删除</th>
+                                </tr>
+                    </thead>
+                   
+                    {%for item in myContents%}
+                    <tr>
+                        <td class="title"><a href="/jk173/view?contentId={{item._id.toString()}}">{{item.title}}</a></td>
+                        <td class="category">{{item.category.name}}</td>
+                        <td class="remove" data-contentid={{item.id}}>删除</td>
+                    </tr>
+                    {%endfor%}
+                    <!-- <li class="title">
+                        <span>标题：</span>{{item.title}}</li>
+                    <li class="category"><span>分类：</span>{{item.category.name}}</li>
+                    <li class="remove"><span>删除</span></li> -->
+                    </table>
+               
+            </div>
+        </div>
+        <aside>
+            <div class="master">
+                <ul>
+                        <li>作者：胡志武</li>
+                        <li>班级：计科173</li>
+                        <li>QQ：1627983849</li>
+                        <li>留言：希望能与你交个朋友</li>
+                </ul>
+                
+            </div>
+        </aside>
+    </div>
+</main>
+<script>
+
+    var imgFile = document.getElementsByClassName("img-btn")[0],
+        uploadBtn = document.getElementsByTagName("button")[0],
+        username = document.getElementsByClassName("inputusername")[0],
+        dir =  document.getElementsByClassName("dir")[0],
+        tableList = document.getElementsByClassName("content-item")[0];
+
+        function getXHR() {
+            var xhr = null;
+            if (window.XMLHttpRequest) {
+                xhr = new XMLHttpRequest();
+            } else if (window.ActiveXObject) {
+                try {
+                    xhr = new ActiveObject("Msxml2.XMLHTTP");
+                } catch (e) {
+                    try {
+                        xhr = new ActiveXObject("Microsoft.XMLHttp");
+                    } catch (e) {
+                        alert("您的浏览器暂不支持Ajax！");
+                    }
+                }
+            }
+            return xhr;
+        }
+        var xhr = getXHR();
+       
+        uploadBtn.onclick = function(){
+           console.log(username.value);
+            var formData = new FormData();
+            formData.set("userImg",imgFile.files[0]);
+            formData.append("username",username.value);
+            formData.append("dir",dir.value);
+           
+            xhr.open("POST","/jk173/homePage",true);
+
+            xhr.send(formData);
+            // var code = JSON.parse(xhr.responseText).code;
+            //     if(code==8){
+            //         alert("保存成功");
+            //         window.location.href="/jk173"
+            //     }
+            xhr.onload = function(){
+                var code = JSON.parse(xhr.responseText).code;
+                if(code==8){
+                    alert("保存成功");
+                    window.location.href="/jk173"
+                }
+            }
+        }
+        // xhr.onreadystatechange = function(){
+        //     if(xhr.readyState==4&&xhr.status==200){
+        //         var code = JSON.parse(xhr.responseText).code;
+        //         if(code==8){
+        //             alert("保存成功");
+        //             window.location.href="/jk173"
+        //         }
+        //     }
+        // }
+        function getXHR(){
+            var xhr=null;
+            if(window.XMLHttpRequest){
+                xhr = new XMLHttpRequest();
+            }else if(window.ActiveXObject){
+                try{
+                    xhr = new window.ActiveXObject("MicroSoft.XMLHttp");
+                }catch(e){
+                    try{
+                        xhr = new window.ActiveOBject("Msxml2.XMLHttp");
+                    }catch(e){
+                        alert("你的浏览器不支持ajax");
+                    }
+                }
+            
+            }
+            return xhr;
+        }
+        var xhr2 = getXHR();
+        //删除文章
+        tableList.addEventListener("click",remove,false);
+        xhr2.onreadystatechange = function(){
+            if(xhr2.readyState==4&&xhr2.status==200){
+               var code = JSON.parse(xhr2.responseText).code;
+               if(code==13){
+                   alert("删除成功！");
+                   window.location.reload();
+               }
+            }
+        }
+        function remove(e){
+            var ev = e || window.event;
+            var tar = ev.target || ev.srcElement;
+            if(tar.className=="remove"){
+                var contentId = tar.dataset.contentid;
+                
+                xhr2.open("GET","/jk173/remove?contentId="+contentId,true);
+                xhr2.send();
+
+            }
+        }
+        
+</script>
+{%endblock%}
